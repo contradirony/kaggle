@@ -5,7 +5,7 @@
 ###########################################################################
 
 library(jsonlite)
-train<-fromJSON("/media/sammi/Sammi/kaggle/whats-cooking/train.json",flatten=TRUE)
+train <- fromJSON("/media/sammi/Sammi/kaggle/whats-cooking/train.json",flatten=TRUE)
 diff_cuisines<-unique(train$cuisine)
 # ftable<-table(train$cuisine)
 # barplot(ftable)
