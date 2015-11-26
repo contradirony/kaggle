@@ -61,27 +61,55 @@ for(i in diff_cuisines){
 }
 
 cuis.mat.all <- cuis.mat.all/colSums(cuis.mat.all)[col(cuis.mat.all)]
-cuis.mat.all[is.na(cuis.mat.all)]<-0
+# cuis.mat.all[is.na(cuis.mat.all)]<-0
 
+topcandidate <- NULL
+#for(r in 1:1000){ 
+  for(r in 1:n.newrecipes){ 
+    corlist <- cov(newrecipes[r,],t(cuis.mat.all))
+  temp <- diff_cuisines[which(max(corlist) == corlist)]
+  topcandidate[r] <-temp
+  if(r%%100==0){  print(r)}
+}
+
+submit <- data.frame(id = test$id, cuisine = topcandidate)
+write.csv(submit, file = "/media/sammi/Sammi/kaggle/whats-cooking/submission2h.csv", row.names = FALSE)
+
+## spearman cor 0.17498 bad
+## cov 0.7145 ok
+
+####
+cuis.mat.all.test <- NULL
+for(i in diff_cuisines){
+  cuis.mat <- out[which(train$cuisine==i),]
+  cuis.mat.all.test <- rbind(cuis.mat.all.test, colSums(cuis.mat))
+  print(i)
+}
+
+cuis.mat.all.test <- rbind(cuis.mat.all.test, newrecipes)
+newrecipes.norm <- cuis.mat.all.test/colSums(cuis.mat.all.test)[col(cuis.mat.all.test)]
+
+newrecipes.norm.test <- newrecipes.norm[21:(n.newrecipes+20),]
+####
 
 topcandidate <- NULL
 for(r in 1:n.newrecipes){ 
-  corlist <- cor(newrecipes[r,],t(cuis.mat.all))
+  corlist <- cor(newrecipes.norm.test[r,],t(cuis.mat.all))
   temp <- diff_cuisines[which(max(corlist) == corlist)]
   topcandidate[r] <-temp
   }
 
 submit <- data.frame(id = test$id, cuisine = topcandidate)
-write.csv(submit, file = "/media/sammi/Sammi/kaggle/whats-cooking/submission2c.csv", row.names = FALSE)
+write.csv(submit, file = "/media/sammi/Sammi/kaggle/whats-cooking/submission2e.csv", row.names = FALSE)
 
-## scores: 0.72989 
+## scores: 0.72989 21
 ## big improvement from simple vec-vec highest ingredient overlap
 ## expect some marginal improvement through better ingredient matrix
 
 ## scores:0.53751 2b
 ## scores:0.68775 2c
 
-
+## scores:0.59242 2e -- normalised test
 
 
 
